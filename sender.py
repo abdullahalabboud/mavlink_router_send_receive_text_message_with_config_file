@@ -7,7 +7,7 @@ from time import sleep
 
 
 TARGET_COMP_ID = 1
-# python3 examples/sender.py 127.0.0.1:3000 100 0
+# python3 examples/sender.py 127.0.0.1:14552 21 0
 # argv[3] : means 0 value and that has used in ping_send method to indicates a PING request
 
 if len(sys.argv) != 4:
@@ -18,8 +18,9 @@ if len(sys.argv) != 4:
     )
     sys.exit()
 
+srcSystem = int(sys.argv[2])
 
-mav = mavutil.mavlink_connection("udp:" + sys.argv[1], source_system=int(sys.argv[2]))
+mav = mavutil.mavlink_connection("udp:" + sys.argv[1], source_system=srcSystem)
 # print("mav try connection")
 mav.wait_heartbeat()
 # print("mav wait heartbeat ")
@@ -48,6 +49,13 @@ pingthread.start()
 # print("start threading ")
 
 
+print(
+    "Heartbeat from system id : %u , component id : %u"
+    % (mav.target_system, mav.target_component)
+)
+
 while True:
+    # print("\n\n\n\n", srcSystem, "\n\n\n\n")
+    print("Sending ...!!")
     msg = mav.recv_match(blocking=True)
-    print("Message from %d: %s:" % (msg.get_srcSystem(), msg))
+    # print("Message from %d: %s:" % (msg.get_srcSystem(), msg))

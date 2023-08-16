@@ -7,7 +7,7 @@ from time import sleep
 
 OWN_COMP_ID = 1
 
-# python3 examples/receiver.py 127.0.0.1:4000 50
+# python3 examples/receiver.py 127.0.0.1:14553 22
 
 if len(sys.argv) != 3:
     print("Usage : %s <ip:udp_port> <system_id>" % (sys.argv[0]))
@@ -21,10 +21,18 @@ if len(sys.argv) != 3:
 srcSystem = int(sys.argv[2])
 
 mav = mavutil.mavlink_connection(
-    "udpin:" + sys.argv[1], source_system=srcSystem, source_component=OWN_COMP_ID
+    "udpin:" + sys.argv[1],
+    source_system=srcSystem,
+    source_component=OWN_COMP_ID,
 )
 mav.wait_heartbeat()
+
+print(
+    "Heartbeat from system id : %u , component id : %u"
+    % (mav.target_system, mav.target_component)
+)
 while True:
+    # print("\n\n\n\n", srcSystem, "\n\n\n\n")
     msg = mav.recv_match(blocking=True)
     print("Message from %d %s " % (msg.get_srcSystem(), msg))
     if hasattr(msg, "target_system"):
